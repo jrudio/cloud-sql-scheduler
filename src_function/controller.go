@@ -3,13 +3,14 @@ package controller
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
 
 	"cloud.google.com/go/compute/metadata"
 	sqladmin "google.golang.org/api/sqladmin/v1beta4"
 )
 
-func HandleInstanceState() {
+func HandleInstanceState(w http.ResponseWriter, r *http.Request) {
 	log.Println("function start")
 
 	instanceName := os.Getenv("INSTANCE_NAME")
