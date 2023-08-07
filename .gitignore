@@ -1,4 +1,8 @@
 *.tfvars
 *.tfvars.json
+.terraform
+.terraform.lock.hcl
+terraform.*
 dist/
+demo/server
 planned
