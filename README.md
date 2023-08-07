@@ -8,7 +8,7 @@ Terraform module to turn on or off your Cloud SQL instance on a schedule for non
 
 ## Components
 
-Cloud Scheduler -> Pub/Sub -> Cloud Function
+Cloud Scheduler -> HTTP call -> Cloud Function
 
 ## Referenced Solution
 
