@@ -23,6 +23,18 @@ resource "google_service_account" "instance_state_controller_service_account" {
   description  = "service account to only operate as a Cloud Function that can mutate Cloud SQL instance states (or activation policy)"
 }
 
+resource "google_project_iam_member" "cloud-functions-invoker-iam" {
+  project = var.project_id
+  role    = "roles/cloudfunctions.invoker"
+  member  = "serviceAccount:${google_service_account.instance_state_scheduler_service_account.email}"
+}
+
+resource "google_service_account" "instance_state_scheduler_service_account" {
+  account_id   = "${substr(var.function_name, 15, 0)}scheduler"
+  display_name = "Instance State Scheduler Service Account"
+  description  = "service account to invoke the Cloud Function"
+}
+
 resource "google_storage_bucket" "function_bucket" {
   name     = "${var.project_id}-${var.function_name}"
   location = var.region
@@ -54,4 +66,48 @@ resource "google_cloudfunctions_function" "instance_state_controller" {
   https_trigger_security_level = "SECURE_ALWAYS"
   timeout                      = 60
   entry_point                  = "HandleInstanceState"
+}
+
+resource "google_cloud_scheduler_job" "instance_state_scheduler_on" {
+  name             = "${var.function_name}-scheduler-on"
+  description      = "Schedules the target instance to turn on"
+  schedule         = var.scheduler_time_on
+  time_zone        = var.scheduler_time_zone
+  attempt_deadline = "120s"
+
+  retry_config {
+    retry_count = 1
+  }
+
+  http_target {
+    http_method = "POST"
+    uri         = google_cloudfunctions_function.instance_state_controller.https_trigger_url
+    body        = base64encode("{\"instanceName\":\"${var.instance_name}\",\"state\":\"on\"}")
+    oidc_token {
+      service_account_email = google_service_account.instance_state_scheduler_service_account.email
+    }
+  }
+
+}
+
+resource "google_cloud_scheduler_job" "instance_state_scheduler_off" {
+  name             = "${var.function_name}-scheduler-off"
+  description      = "Schedules the target instance to turn off"
+  schedule         = var.scheduler_time_off
+  time_zone        = var.scheduler_time_zone
+  attempt_deadline = "120s"
+
+  retry_config {
+    retry_count = 1
+  }
+
+  http_target {
+    http_method = "POST"
+    uri         = google_cloudfunctions_function.instance_state_controller.https_trigger_url
+    body        = base64encode("{\"instanceName\":\"${var.instance_name}\",\"state\":\"off\"}")
+    oidc_token {
+      service_account_email = google_service_account.instance_state_scheduler_service_account.email
+    }
+  }
+
 }

@@ -21,3 +21,25 @@ variable "function_name" {
 
   default = "instance-state-controller"
 }
+
+variable "scheduler_time_zone" {
+  type = string
+
+  default = "America/Los_Angeles"
+}
+
+variable "scheduler_time_on" {
+  type = string
+
+  description = "instance on - defaults to 8am PDT - time in cron job expression"
+
+  default = "00 8 * * *"
+}
+
+variable "scheduler_time_off" {
+  type = string
+
+  description = "instance off - defaults to 6pm PDT - time in cron job expression"
+
+  default = "00 18 * * *"
+}
