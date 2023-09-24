@@ -31,15 +31,15 @@ variable "scheduler_time_zone" {
 variable "scheduler_time_on" {
   type = string
 
-  description = "instance on - defaults to 8am PDT - time in cron job expression"
+  description = "instance on - defaults to 8am PDT Monday through Friday - time in cron job expression"
 
-  default = "00 8 * * *"
+  default = "00 8 * * 1-5"
 }
 
 variable "scheduler_time_off" {
   type = string
 
-  description = "instance off - defaults to 6pm PDT - time in cron job expression"
+  description = "instance off - defaults to 6pm PDT  Monday through Friday - time in cron job expression"
 
-  default = "00 18 * * *"
+  default = "00 8 * * 1-5"
 }
