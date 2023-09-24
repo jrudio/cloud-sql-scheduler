@@ -1,4 +1,4 @@
-module github.com/jrudio/cloud-sql-scheduler/src_function
+module github.com/jrudio/terraform-google-cloud-sql-shutdown-scheduler/src_function
 
 go 1.20
 
