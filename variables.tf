@@ -41,5 +41,5 @@ variable "scheduler_time_off" {
 
   description = "instance off - defaults to 6pm PDT  Monday through Friday - time in cron job expression"
 
-  default = "00 8 * * 1-5"
+  default = "00 18 * * 1-5"
 }
